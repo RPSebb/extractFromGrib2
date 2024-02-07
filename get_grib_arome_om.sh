@@ -1,8 +1,8 @@
 declare -A model
 
 # Constants
-model["ANTIL"]=""OMAN""
-model["GUYANE"]=""OMGU""
+model["ANTIL"]="OMAN"
+model["GUYANE"]="OMGU"
 model["INDIEN"]="OMOI"
 model["NCALED"]="OMNC"
 model["POLYN"]="OMPF"
