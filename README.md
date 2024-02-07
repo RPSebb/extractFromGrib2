@@ -4,11 +4,11 @@ Main application extract data from grib2 file to a json file.
 longitude and latitude are desired coordinate.
 
 The output will be located to :
-./json/date/output_folder/reseau/level_type/shortname/filename.json
+./json/date/output_folder/network_time/level_type/shortname/filename.json
 
 date format is YYYY-MM-DD
 
-reseau values are {00, 06, 12, 18}
+network_time values are {00, 06, 12, 18}
 
 level_type values are {"surface", "height", "isobaric"}
 
