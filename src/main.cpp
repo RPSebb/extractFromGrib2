@@ -34,7 +34,7 @@ void extractMetadata(std::string path);
 void extractData(std::string path);
 float toMultipleOf(float value, float mutiple);
 void d(double*& values);
-void writeFile(std::string path, double*& values);
+void writeFile(std::string path, double*& values, std::string validityDate, long validityTime, std::string units);
 int getIndex(float lon, float lat);
 int getIndexAlt(float lon, float lat, float lonFirst, float lonLast, int ni);
 int getIndexLon(float lon);
@@ -53,7 +53,6 @@ int main(int argc, char* argv[]) {
 
     if(argc > 6) {
         try{
-
             inLonFirst = std::stod(argv[3]);
             inLonLast  = std::stod(argv[4]);
             inLatFirst = std::stod(argv[6]);
@@ -63,7 +62,7 @@ int main(int argc, char* argv[]) {
             std::cerr << e.what() << std::endl;
             exit(1);
         } 
-    } else { std::cerr << "Missing coordinates" << std::endl;; exit(1); }
+    } else { std::cerr << "Missing coordinates" << std::endl; exit(1); }
 
     if( inLonFirst < lonFirst || inLonFirst > lonLast ||
         inLonLast  < lonFirst || inLonLast  > lonLast ||
@@ -80,8 +79,6 @@ int main(int argc, char* argv[]) {
     indexLatMax =  getIndexLat(inLatLast);
 
     extractData(filename);
-    
-    fmt::print("\n");
 
     return 0;
 }
@@ -142,6 +139,7 @@ void extractData(std::string filename) {
     char shortName[20];
     char typeOfLevel[20];
     char validityDate[20];
+    char units[20];
     long step, year, month, day, hour, level, validityTime;
     while((handle = codes_handle_new_from_file(0, file ,PRODUCT_GRIB, &error)) != NULL) {
 
@@ -151,6 +149,8 @@ void extractData(std::string filename) {
         codes_get_string(handle, "typeOfLevel" , typeOfLevel , &len);
         len = 20;
         codes_get_string(handle, "validityDate", validityDate, &len);
+        len = 20;
+        codes_get_string(handle, "units", units, &len);
 
         codes_get_long(handle, "step" , &step );
         codes_get_long(handle, "year" , &year );
@@ -180,7 +180,7 @@ void extractData(std::string filename) {
         codes_get_double_array(handle, "values", values, &size);
 
         path = fmt::format("{}/{:02d}.json", path, step);
-        writeFile(path, values);
+        writeFile(path, values, validityDate, validityTime, units);
 
         // d(values);
         delete[] values;
@@ -208,16 +208,20 @@ void d(double*& values) {
     fmt::print("grid  ({:.3f},{:.3f}) : {:.2f}\n", lon, lat, grid[index]);
 }
 
-void writeFile(std::string path, double*& values) {
+void writeFile(std::string path, double*& values, std::string validityDate, long validityTime, std::string units) {
     fmt::ostream f = fmt::output_file(path);
+
     f.print("{{\n");
+    f.print("\t\"units\":\"{}\",\n", units);
+    f.print("\t\"forecast_date\":\"{}-{}-{}\",\n", validityDate.substr(0, 4), validityDate.substr(4, 2), validityDate.substr(6, 2));
+    f.print("\t\"forecast_time\":\"{:02d}\",\n", validityTime / 100);
     f.print("\t\"{}\":{{\"first\":{}, \"last\":{}}},\n", "longitude", inLonFirst, inLonLast);
     f.print("\t\"{}\":{{\"first\":{}, \"last\":{}}},\n", "latitude", inLatFirst, inLatLast);
     f.print("\t\"ni\":{},\n", indexLonMax - indexLonMin);
     f.print("\t\"res\": {}, \n", iRes);
     f.print("\t\"index\": \"{} + {} * ni\",\n", 
-        "round((lon - longitude.first) / res)",
-        "round((latitude.first - lat)  / res)");
+        "round((desired_longitude - longitude.first) / res)",
+        "round((latitude.first - desired_latitude)  / res)");
     f.print("\t\"grid\": [");
 
     for(int y = indexLatMin; y <= indexLatMax; y++) {
@@ -230,7 +234,7 @@ void writeFile(std::string path, double*& values) {
         }
     }
 
-    f.print("]");
+    f.print("]\n");
     f.print("}}");
 
     f.close();
