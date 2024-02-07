@@ -34,7 +34,7 @@ fi
 
 for ((i=$step_start; i<=$step_end; i++))
 do
-    # Ensure that step form is "XX"
+    # Ensure that step form is 2 char long
     if [ "$i" -lt 10 ]; then
         step="0$i"
     else
@@ -56,5 +56,4 @@ FIN
 
     echo $url
     curl -o "${destinationFolder}/${step}.grib2" -H "apikey: ${apikey}" "${url}"
-    sleep 5
 done
