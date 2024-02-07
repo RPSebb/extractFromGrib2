@@ -43,17 +43,17 @@ Example:
 
 json file :  
 {  
-	"units":"%",  
-	"forecast_date":"2024-02-05",  
-	"forecast_time":"01",  
-	"longitude":{"first":55.2, "last":55.85},  
-	"latitude":{"first":-20.85, "last":-21.4},  
-	"ni":26,  
-	"res": 0.025,  
-	"index": "round((lon - longitude.first) / res) + round((latitude.first - lat)  / res) * ni",  
-	"grid": [values...]  
+	  "units":"%",  
+	  "forecast_date":"2024-02-05",  
+	  "forecast_time":"01",  
+	  "longitude":{"first":55.2, "last":55.85},  
+	  "latitude":{"first":-20.85, "last":-21.4},  
+	  "ni":26,  
+	  "res": 0.025,  
+	  "index": "round((lon - longitude.first) / res) + round((latitude.first - lat)  / res) * ni",  
+	  "grid": [values...]  
 }  
 
 
-This program was made to extract weather data for Reunion Island because API data on the web was not as precise as Meteo France data's (for the desired location).
+This program was made to extract weather data for Reunion Island because API data on the web was not as precise as Meteo France data's (for the desired location).  
 And I wanted only a few data from the file.
