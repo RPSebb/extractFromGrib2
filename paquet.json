@@ -1,0 +1,77 @@
+{
+    "AROME-OM": {
+        "models": {
+            "AROME-OM-ANTIL": {
+                "product": "OMAN",
+                "grid": 0.025,
+                "packages": [
+                    "SP1", "SP2","SP3",
+                    "HP1", "HP2", "HP3",
+                    "IP1", "IP2", "IP3", "IP4", "IP5"
+                ],
+                "reseaux": [0, 6, 12, 18],
+                "time": {
+                    "min": 0,
+                    "max": 48
+                }
+            },
+            "AROME-OM-GUYANE": {
+                "product": "OMGU",
+                "grid": 0.025,
+                "packages": [
+                    "SP1", "SP2","SP3",
+                    "HP1", "HP2", "HP3",
+                    "IP1", "IP2", "IP3", "IP4", "IP5"
+                ],
+                "reseaux": [0, 6, 12, 18],
+                "time": {
+                    "min": 0,
+                    "max": 48
+                }
+            },
+            "AROME-OM-INDIEN": {
+                "product": "OMOI",
+                "grid": 0.025,
+                "packages": [
+                    "SP1", "SP2","SP3",
+                    "HP1", "HP2", "HP3",
+                    "IP1", "IP2", "IP3", "IP4", "IP5"
+                ],
+                "reseaux": [0, 6, 12, 18],
+                "time": {
+                    "min": 0,
+                    "max": 48
+                }
+            },
+            "AROME-OM-NCALED": {
+                "product": "OMNC",
+                "grid": 0.025,
+                "packages": [
+                    "SP1", "SP2","SP3",
+                    "HP1", "HP2", "HP3",
+                    "IP1", "IP2", "IP3", "IP4", "IP5"
+                ],
+                "reseaux": [0, 6, 12, 18],
+                "time": {
+                    "min": 0,
+                    "max": 48
+                }
+            },
+            "AROME-OM-POLYN": {
+                "product": "OMPF",
+                "grid": 0.025,
+                "packages": [
+                    "SP1", "SP2","SP3",
+                    "HP1", "HP2", "HP3",
+                    "IP1", "IP2", "IP3", "IP4", "IP5"
+                ],
+                "reseaux": [0, 12],
+                "time": {
+                    "min": 0,
+                    "max": 48
+                }
+            }
+        }
+    },
+    "WAVESMODELS":[]
+}
