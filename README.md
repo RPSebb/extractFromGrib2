@@ -14,61 +14,57 @@ Each file will be named after his step value.<br>
 <figure>
   <div style="border-radius: 4px 4px 0px 0px; background-color: #444; padding: 5px 10px;">Bash</div>
 
-  ```bash
+  ```Shell
   ./extractSingleFile 2024-02-07/AROME-OM/INDIEN/00/SP1/01.grib2 REUNION 55.2 55.85 -21.40 -20.85 
   ./extractSingleFile 2024-02-07/AROME-OM/INDIEN/00/SP1/03.grib2 REUNION 55.2 55.85 -21.40 -20.85
   ./extractSingleFile 2024-02-07/AROME-OM/INDIEN/00/SP1/07.grib2 REUNION 55.2 55.85 -21.40 -20.85
   ```
 
-  <figcaption style="border-style: solid dashed; padding: 15px 10px; border-width: 2px; margin: 0px 0px 40px 0px; border-color: #444;">
-    <i><b>Figure 1:</b> Call three times the program with differents files.</i>
-  </figcaption>
-</figure>
+  <figcaption><i>Call three times the program with differents files.</i></figcaption>
+</figure><br>
 
 <figure>
   <div style="border-radius: 4px 4px 0px 0px; background-color: #444; padding: 5px 10px;">Directory Tree</div>
 
-<pre>
-json/
-└── 2024-02-07/
-    └── REUNION/
-        └── 00/
-            └── surface/
-                ├── 2r/
-                |   ├── 01.json
-                |   ├── 03.json
-                |   └── 07.json
-                ├── 2t/
-                |   ├── 01.json
-                |   ├── 03.json
-                |   └── 07.json
-                ├── 10efg/
-                |   ├── 01.json
-                |   ├── 03.json
-                |   └── 07.json
-                ├── 10fg/
-                |   ├── 01.json
-                |   ├── 03.json
-                |   └── 07.json
-                ├── 10nfg/
-                |   ├── 01.json
-                |   ├── 03.json
-                |   └── 07.json
-                ├── 10si/
-                |   ├── 01.json
-                |   ├── 03.json
-                |   └── 07.json
-                ...        
-</pre>
-  <figcaption style="border-style: solid dashed; padding: 15px 10px; border-width: 2px; margin: 0px 0px 40px 0px; border-color: #444;">
-    <i><b>Figure 2:</b> Directory tree result after program call.</i>
-  </figcaption>
-</figure>
+  ```
+  json/
+  └── 2024-02-07/
+      └── REUNION/
+          └── 00/
+              └── surface/
+                  ├── 2r/
+                  |   ├── 01.json
+                  |   ├── 03.json
+                  |   └── 07.json
+                  ├── 2t/
+                  |   ├── 01.json
+                  |   ├── 03.json
+                  |   └── 07.json
+                  ├── 10efg/
+                  |   ├── 01.json
+                  |   ├── 03.json
+                  |   └── 07.json
+                  ├── 10fg/
+                  |   ├── 01.json
+                  |   ├── 03.json
+                  |   └── 07.json
+                  ├── 10nfg/
+                  |   ├── 01.json
+                  |   ├── 03.json
+                  |   └── 07.json
+                  ├── 10si/
+                  |   ├── 01.json
+                  |   ├── 03.json
+                  |   └── 07.json
+                  ...        
+  ```
+  <figcaption><i>Directory tree result after program call.</i></figcaption>
+</figure><br>
 
 <figure>
   <div style="border-radius: 4px 4px 0px 0px; background-color: #444; padding: 5px 10px;">Json</div>
 
-  ```json
+  ```JSON
   {  
     "units":"%",  
     "forecast_date":"2024-02-05",  
@@ -81,10 +77,7 @@ json/
     "grid": [1,2,3]
   }
   ```
-
-  <figcaption style="border-style: solid dashed; padding: 15px 10px; border-width: 2px; margin: 0px 0px 40px 0px; border-color: #444;">
-    <b>Figure 3:</b> Json file content.
-  </figcaption>
+  <figcaption><i>Json file content.</i></figcaption>
 </figure>
 
 ## ExtractMultipleFiles UNFINISHED !
@@ -100,10 +93,3 @@ For each shortname present in each message from the grib2 file a json file will 
 Each file will be named after his step value.<br>
 
 This program was made to extract weather data for Reunion Island because API on the web do not provide data precise as Meteo France data's for Reunion Island.<br>
-
-```pascal
-var i Integer;
-begin
-  i := 1;
-end
-```
