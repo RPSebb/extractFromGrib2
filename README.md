@@ -59,7 +59,7 @@ Each file will be named after his step value.</br></p>
                   ...        
   ```
   <figcaption style="font-style: italic; border-style: solid dashed; padding: 15px 10px; border-width: 2px; margin: 0px 0px 40px 0px; border-color: #444; font-size: 1em;">
-    **Figure 2:** Directory tree result after program call.
+    __Figure 2:__ Directory tree result after program call.
   </figcaption>
 </figure>
 
