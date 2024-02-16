@@ -150,6 +150,14 @@ void iterateMessages(std::string filename, InputData& inputData) {
         MessageData messageData;
         getMessageData(handle, messageData);
 
+        if(type == "surface") {
+            path = fmt::format("json/{}/{}/{:02d}/{}/{}", date, folderName, hour, type, shortName);
+            createDirectory(path);
+        } else {
+            path = fmt::format("json/{}/{}/{:02d}/{}/{}/{}", date, folderName, hour, type, shortName, level);
+            createDirectory(path);
+        }
+        
         printFileData(fileData);
         printMessageDate(messageData);
 

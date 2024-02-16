@@ -16,7 +16,7 @@ set(CMAKE_IMPORT_FILE_VERSION 1)
 set(_targetsDefined)
 set(_targetsNotDefined)
 set(_expectedTargets)
-foreach(_expectedTarget eccodes_memfs eccodes)
+foreach(_expectedTarget eccodes)
   list(APPEND _expectedTargets ${_expectedTarget})
   if(NOT TARGET ${_expectedTarget})
     list(APPEND _targetsNotDefined ${_expectedTarget})
@@ -49,13 +49,6 @@ get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
 if(_IMPORT_PREFIX STREQUAL "/")
   set(_IMPORT_PREFIX "")
 endif()
-
-# Create imported target eccodes_memfs
-add_library(eccodes_memfs SHARED IMPORTED)
-
-set_target_properties(eccodes_memfs PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
-)
 
 # Create imported target eccodes
 add_library(eccodes SHARED IMPORTED)

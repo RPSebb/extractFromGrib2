@@ -20,7 +20,7 @@
 #define ECBUILD_VERSION "3.8.2"
 #endif
 #ifndef ECBUILD_MACROS_DIR
-#define ECBUILD_MACROS_DIR  "/home/rpsebb/downloads/eccodes-2.33.0-Source/cmake"
+#define ECBUILD_MACROS_DIR  "/home/rpsebb/cpp-projects/grib_to_json/eccodes-2.34.0-Source/cmake"
 #endif
 
 /* config info */
@@ -32,7 +32,7 @@
 #define ECCODES_OS_VERSION       "5.10.102.1-microsoft-standard-WSL2"
 #define ECCODES_SYS_PROCESSOR    "x86_64"
 
-#define ECCODES_BUILD_TIMESTAMP  "20240123135952"
+#define ECCODES_BUILD_TIMESTAMP  "20240215171350"
 #define ECCODES_BUILD_TYPE       "RelWithDebInfo"
 
 #define ECCODES_C_COMPILER_ID      "GNU"
@@ -49,13 +49,13 @@
 
 /* Needed for finding per package config files */
 
-#define ECCODES_INSTALL_DIR       "/home/rpsebb/eccodes-2.33.0"
-#define ECCODES_INSTALL_BIN_DIR   "/home/rpsebb/eccodes-2.33.0/bin"
-#define ECCODES_INSTALL_LIB_DIR   "/home/rpsebb/eccodes-2.33.0/lib"
-#define ECCODES_INSTALL_DATA_DIR  "/home/rpsebb/eccodes-2.33.0/share/eccodes"
+#define ECCODES_INSTALL_DIR       "/home/rpsebb/cpp-projects/grib_to_json/eccodes"
+#define ECCODES_INSTALL_BIN_DIR   "/home/rpsebb/cpp-projects/grib_to_json/eccodes/bin"
+#define ECCODES_INSTALL_LIB_DIR   "/home/rpsebb/cpp-projects/grib_to_json/eccodes/lib"
+#define ECCODES_INSTALL_DATA_DIR  "/home/rpsebb/cpp-projects/grib_to_json/eccodes/share/eccodes"
 
-#define ECCODES_DEVELOPER_SRC_DIR "/home/rpsebb/downloads/eccodes-2.33.0-Source"
-#define ECCODES_DEVELOPER_BIN_DIR "/home/rpsebb/downloads/build"
+#define ECCODES_DEVELOPER_SRC_DIR "/home/rpsebb/cpp-projects/grib_to_json/eccodes-2.34.0-Source"
+#define ECCODES_DEVELOPER_BIN_DIR "/home/rpsebb/cpp-projects/grib_to_json/build"
 
 /* Fortran support */
 
