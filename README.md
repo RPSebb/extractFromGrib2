@@ -23,44 +23,45 @@ Each file will be named after his step value.</br></p>
   <b>Figure 1:</b> Call three times the program with differents files.
 </div>
 
+<figure>
+  <div style="border-radius: 4px 4px 0px 0px; background-color: #444; padding: 5px 10px;">Directory Tree</div>
 
-<div style="border-radius: 4px 4px 0px 0px; background-color: #444; padding: 5px 10px;">Directory Tree</div>
-
-```
-json/
-└── 2024-02-07/
-    └── REUNION/
-        └── 00/
-            └── surface/
-                ├── 2r/
-                |   ├── 01.json
-                |   ├── 03.json
-                |   └── 07.json
-                ├── 2t/
-                |   ├── 01.json
-                |   ├── 03.json
-                |   └── 07.json
-                ├── 10efg/
-                |   ├── 01.json
-                |   ├── 03.json
-                |   └── 07.json
-                ├── 10fg/
-                |   ├── 01.json
-                |   ├── 03.json
-                |   └── 07.json
-                ├── 10nfg/
-                |   ├── 01.json
-                |   ├── 03.json
-                |   └── 07.json
-                ├── 10si/
-                |   ├── 01.json
-                |   ├── 03.json
-                |   └── 07.json
-                ...        
-```
-<div style="font-style: italic; border-style: solid dashed; padding: 15px 10px; border-width: 2px; margin: 0px 0px 40px 0px; border-color: #444; font-size: 1em;">
-  <b>Figure 2:</b> Directory tree result after program call.
-</div>
+  ```
+  json/
+  └── 2024-02-07/
+      └── REUNION/
+          └── 00/
+              └── surface/
+                  ├── 2r/
+                  |   ├── 01.json
+                  |   ├── 03.json
+                  |   └── 07.json
+                  ├── 2t/
+                  |   ├── 01.json
+                  |   ├── 03.json
+                  |   └── 07.json
+                  ├── 10efg/
+                  |   ├── 01.json
+                  |   ├── 03.json
+                  |   └── 07.json
+                  ├── 10fg/
+                  |   ├── 01.json
+                  |   ├── 03.json
+                  |   └── 07.json
+                  ├── 10nfg/
+                  |   ├── 01.json
+                  |   ├── 03.json
+                  |   └── 07.json
+                  ├── 10si/
+                  |   ├── 01.json
+                  |   ├── 03.json
+                  |   └── 07.json
+                  ...        
+  ```
+  <figcaption style="font-style: italic; border-style: solid dashed; padding: 15px 10px; border-width: 2px; margin: 0px 0px 40px 0px; border-color: #444; font-size: 1em;">
+    **Figure 2:** Directory tree result after program call.
+  </figcaption>
+</figure>
 
 <div style="border-radius: 4px 4px 0px 0px; background-color: #444; padding: 5px 10px;">Json</div>
 
