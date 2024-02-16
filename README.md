@@ -78,7 +78,7 @@ Each file will be named after his step value.<br>
   }
   ```
   <figcaption><i>Json file content.</i></figcaption>
-</figure>  
+</figure></br></br>
 
 ## ExtractMultipleFiles UNFINISHED !
 #### Parameters:
