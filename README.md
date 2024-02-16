@@ -21,7 +21,7 @@ Each file will be named after his step value.<br>
   ```
 
   <figcaption><i>Call three times the program with differents files.</i></figcaption>
-</figure>    
+</figure></br></br> 
 
 <figure>
   <div style="border-radius: 4px 4px 0px 0px; background-color: #444; padding: 5px 10px;">Directory Tree</div>
@@ -59,7 +59,7 @@ Each file will be named after his step value.<br>
                   ...        
   ```
   <figcaption><i>Directory tree result after program call.</i></figcaption>
-</figure>    
+</figure></br></br>
 
 <figure>
   <div style="border-radius: 4px 4px 0px 0px; background-color: #444; padding: 5px 10px;">Json</div>
