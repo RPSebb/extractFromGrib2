@@ -1,42 +1,70 @@
-extractSingleFile <file_name> <folder_output> <longitude_min> <longitude_max> <latitude_min> <latitude_max>
+<h2>ExtractSingleFile</h2>
+<h4 style="text-decoration: underline;">Parameters:</h4>
 
-extractSingleFile extract data from a single grib2 file for a certain coordinates range and write it in multiple json files.
-For each shortname present in each message from grib2 file and json file will be created.
-Each file will be named after his step value.
+```<file_name> <output_folder> <longitude_min> <longitude_max> <latitude_min> <latitude_max>```
 
-The output directory will look like this :
-- json/  
-  - <date>/
-    - <folder_output>/
-      - <hour>/
-        - <level_type>/
-          - <shortname>/
-            - <json_file>
+<h4 style="text-decoration: underline;">Description:</h4>
 
-Example:
-./extractSingleFile 2024-02-07/AROME-OM/INDIEN/00/SP1/01.grib2 REUNION 55.2 55.85 -21.40 -20.85
+<p>This program extract data from a single grib2 file for a certain coordinates range and write it in multiple json files.</br>
+For each shortname present in each message from the grib2 file a json file will be created.</br>
+Each file will be named after his step value.</br></p>
 
-- json/  
-  - 2024-02-07/
-    - REUNION/
-      - 00/
-        - surface/
-          - 2r/
-            - 01.json
-          - 2t/
-            - 01.json
-          - 10si/
-            - 01.json
-          - 10u/
-            - 01.json
-          - 10v/
-            - 01.json
-          - 10wdir/
-            - 01.json
-          - prmsl/
-            - 01.json
+<h4 style="text-decoration: underline;">Example:</h4>
 
-The json file content will looks like:
+<div style="border-radius: 4px 4px 0px 0px; background-color: #444; padding: 5px 10px;">Bash</div>
+
+```shell 
+./extractSingleFile 2024-02-07/AROME-OM/INDIEN/00/SP1/01.grib2 REUNION 55.2 55.85 -21.40 -20.85 
+./extractSingleFile 2024-02-07/AROME-OM/INDIEN/00/SP1/03.grib2 REUNION 55.2 55.85 -21.40 -20.85
+./extractSingleFile 2024-02-07/AROME-OM/INDIEN/00/SP1/07.grib2 REUNION 55.2 55.85 -21.40 -20.85
+```
+
+<div style="font-style: italic; border-style: solid dashed; padding: 15px 10px; border-width: 2px; margin: 0px 0px 40px 0px; border-color: #444; font-size: 1em;">
+  <b>Figure 1:</b> Call three times the program with differents files.
+</div>
+
+
+<div style="border-radius: 4px 4px 0px 0px; background-color: #444; padding: 5px 10px;">Directory Tree</div>
+
+```
+json/
+└── 2024-02-07/
+    └── REUNION/
+        └── 00/
+            └── surface/
+                ├── 2r/
+                |   ├── 01.json
+                |   ├── 03.json
+                |   └── 07.json
+                ├── 2t/
+                |   ├── 01.json
+                |   ├── 03.json
+                |   └── 07.json
+                ├── 10efg/
+                |   ├── 01.json
+                |   ├── 03.json
+                |   └── 07.json
+                ├── 10fg/
+                |   ├── 01.json
+                |   ├── 03.json
+                |   └── 07.json
+                ├── 10nfg/
+                |   ├── 01.json
+                |   ├── 03.json
+                |   └── 07.json
+                ├── 10si/
+                |   ├── 01.json
+                |   ├── 03.json
+                |   └── 07.json
+                ...        
+```
+<div style="font-style: italic; border-style: solid dashed; padding: 15px 10px; border-width: 2px; margin: 0px 0px 40px 0px; border-color: #444; font-size: 1em;">
+  <b>Figure 2:</b> Directory tree result after program call.
+</div>
+
+<div style="border-radius: 4px 4px 0px 0px; background-color: #444; padding: 5px 10px;">Json</div>
+
+```json
 {  
   "units":"%",  
   "forecast_date":"2024-02-05",  
@@ -46,9 +74,24 @@ The json file content will looks like:
   "ni":26,  
   "res": 0.025,  
   "index": "round((lon - longitude.first) / res) + round((latitude.first - lat)  / res) * ni",  
-  "grid": [values...]  
+  "grid": [1,2,3]
 }
+```
 
-extractMultipleFiles will recursivly search grib2 files in a certain folder.
-For each file founded, the program will do the same thing as extractSingleFile .
-This program was made to extract weather data for Reunion Island because API on the web do not provide data precise as Meteo France data's for Reunion Island. 
+<div style="font-style: italic; border-style: solid dashed; padding: 15px 10px; border-width: 2px; margin: 0px 0px 40px 0px; border-color: #444; font-size: 1em;">
+  <b>Figure 3:</b> Json file content.
+</div>
+
+<h2>ExtractMultipleFiles</h2>
+<h4 style="text-decoration: underline;">Parameters:</h4>
+
+```<grib_folder> <output_folder> <longitude_min> <longitude_max> <latitude_min> <latitude_max>```
+
+<h4 style="text-decoration: underline;">Description:</h4>
+
+<p>This program will recursivly search grib2 files in a certain folder.</br>
+For each file founded, it will extract data for a certain coordinates range and write it in multiple json files.</br>
+For each shortname present in each message from the grib2 file a json file will be created.</br>
+Each file will be named after his step value.</br></p>
+
+This program was made to extract weather data for Reunion Island because API on the web do not provide data precise as Meteo France data's for Reunion Island.</br>
