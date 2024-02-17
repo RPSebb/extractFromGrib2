@@ -87,7 +87,7 @@ Each file will be named after his step value.<br>
 
 #### Description:
 
-This program recursivly search grib2 files in a certain folder.<br>
+This program recursively search grib2 files in a certain folder.<br>
 For each file founded, it will extract data for a certain coordinates range and write it in multiple json files.<br>
 For each shortname present in each message from the grib2 file a json file will be created.<br>
 Each file will be named after his step value.<br>
