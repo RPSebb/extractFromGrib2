@@ -20,7 +20,7 @@ Each file will be named after his step value.<br>
   ./extractSingleFile 2024-02-07/AROME-OM/INDIEN/00/SP1/07.grib2 REUNION 55.2 55.85 -21.40 -20.85
   ```
 
-  <figcaption><i>Call three times the program with differents files.</i></figcaption>
+  <figcaption><i>Call program with differents files.</i></figcaption>
 </figure></br></br> 
 
 <figure>
@@ -87,9 +87,9 @@ Each file will be named after his step value.<br>
 
 #### Description:
 
-This program will recursivly search grib2 files in a certain folder.<br>
+This program recursivly search grib2 files in a certain folder.<br>
 For each file founded, it will extract data for a certain coordinates range and write it in multiple json files.<br>
 For each shortname present in each message from the grib2 file a json file will be created.<br>
 Each file will be named after his step value.<br>
 
-This program was made to extract weather data for Reunion Island because API on the web do not provide data precise as Meteo France data's for Reunion Island.<br>
+This program was made to extract weather from Meteo France AROME-OM INDIEN grib2 files.<br>
