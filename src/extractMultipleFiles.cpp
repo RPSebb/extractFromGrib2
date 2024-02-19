@@ -5,161 +5,195 @@
 #include <fmt/ranges.h>
 #include <vector>
 #include <utils.hpp>
+#include <map>
 
-struct FileData {
-    struct { double first, last; }  longitude;
-    struct { double first, last; }   latitude;
-    struct { double     i,    j; } resolution;
-    struct { long       i,    j; }          n;
-    std::string date, time;
-    size_t gridSize;
+// Map of errors message
+std::map<int, std::string> errors {
+   {1, "Not enough parameters"},
+   {2, "Input coordinates cannot be converted to double."},
+   {3, "Input folder does not exist."},
+   {4, "Input folder is not a folder."},
+   {5, "Input coordinates out of bounds."}
 };
 
-struct MessageData {
-    char shortName[20], typeOfLevel[20], units[20];
-    std::string date, time;
-    long step;
-    double* values;
+struct Range { double first, last; };
+struct CoordinatesRange { Range longitude, latitude; };
+
+struct GribData {
+    // Constants
+    CoordinatesRange coordinates;
+    struct { double i, j; } resolution;
+    struct { long   i, j; }          n;
+    char dataDate[20];
+    char dataTime[20];
+    size_t gridSize;
+
+    // Message
+    char        units[20];
+    char    shortName[20];
+    char  typeOfLevel[20];
+    char validityDate[20];
+    char validityTime[20];
+    long      step, level;
+    std::vector<double>   grid;
 };
 
 struct InputData {
+    CoordinatesRange coordinates;
     std::string gribFolder;
     std::string outputFolder;
-    struct { double first, last; } longitude;
-    struct { double first, last; }  latitude;
 };
 
-std::vector<std::string> filenames;
+int getIndex(float longitude, float latitude, CoordinatesRange coords, int ni, int res) {
+    int iLon = round((longitude - coords.longitude.first) / res);
+    int iLat = round((latitude  -  coords.latitude.first) / res);
+    return iLat * ni + iLon;
+}
 
+std::string convertDate(std::string date) {
+    return fmt::format("{}-{}-{}", date.substr(0, 4), date.substr(4, 2), date.substr(6, 2));
+}
+
+std::string convertTime(std::string time) {
+    return fmt::format("{}:{}", time.substr(0, 2), time.substr(2, 2));
+}
+
+// Get user input data
 void getInputData(InputData& data, int argc, char* argv[]) {
     if(argc > 1)  { data.gribFolder = argv[1]; }
     else          { data.gribFolder = "grib";  }
 
-    if(argc <= 6) { throw std::runtime_error("Coordinates are missing or incomplet."); }
+    if(argc <= 6) { throw 1; }
 
     try {
-        data.longitude.first = std::stod(argv[3]);
-        data.longitude.last  = std::stod(argv[4]);
-        data.latitude.first  = std::stod(argv[6]);
-        data.latitude.last   = std::stod(argv[5]);
-    } catch (std::exception& e) {
-        throw std::runtime_error("Input coordinates cannot be converted to double.");
-    }
-};
-
-void getFileData(codes_handle* handle, FileData& fileData) {
-    size_t len; char date[20], time[20];
-
-    len = 20; codes_get_string(handle, "dataDate", date, &len);
-    len = 20; codes_get_string(handle, "dataTime", time, &len);
-
-    codes_get_double(handle, "longitudeOfFirstGridPointInDegrees", &fileData.longitude.first);
-    codes_get_double(handle, "longitudeOfLastGridPointInDegrees" , &fileData.longitude.last );
-    codes_get_double(handle, "latitudeOfFirstGridPointInDegrees" , &fileData.latitude.first );
-    codes_get_double(handle, "latitudeOfLastGridPointInDegrees"  , &fileData.latitude.last  );
-    codes_get_double(handle, "iDirectionIncrementInDegrees"      , &fileData.resolution.i   );
-    codes_get_double(handle, "jDirectionIncrementInDegrees"      , &fileData.resolution.j   );
-    codes_get_size  (handle, "values"                            , &fileData.gridSize       );
-    codes_get_long  (handle, "Ni"                                , &fileData.n.i            );
-    codes_get_long  (handle, "Nj"                                , &fileData.n.j            );
-
-    std::string _date = date;
-    std::string _time = time;
-    fileData.date =  fmt::format("{}-{}-{}", 
-                    _date.substr(0, 4),
-                    _date.substr(4, 2), 
-                    _date.substr(6, 2));
-    fileData.time = fmt::format("{}:{}", _time.substr(0, 2), _time.substr(2, 2));
+        data.coordinates.longitude.first = std::stod(argv[3]);
+        data.coordinates.longitude.last  = std::stod(argv[4]);
+        data.coordinates.latitude.first  = std::stod(argv[6]);
+        data.coordinates.latitude.last   = std::stod(argv[5]);
+    } catch (std::exception& e) { throw 2; }
 }
 
-void getMessageData(codes_handle* handle, MessageData& messageData) {
-    size_t len; char date[20];
-    len = 20; codes_get_string(handle, "shortName"       , messageData.shortName   , &len);
-    len = 20; codes_get_string(handle, "typeOfLevel"     , messageData.typeOfLevel , &len);
-    len = 20; codes_get_string(handle, "validityDateTime", date                    , &len);
-    len = 20; codes_get_string(handle, "units"           , messageData.units       , &len);
-    
-    codes_get_long(handle, "step", &messageData.step);
+// Extract unchaged data from grib file
+void getConstantData(codes_handle* handle, GribData& data) {
+    size_t len;
+    len = 20; codes_get_string(handle, "dataDate", data.dataDate, &len);
+    len = 20; codes_get_string(handle, "dataTime", data.dataTime, &len);
+    codes_get_double(handle, "longitudeOfFirstGridPointInDegrees", &data.coordinates.longitude.first);
+    codes_get_double(handle, "longitudeOfLastGridPointInDegrees" , &data.coordinates.longitude.last );
+    codes_get_double(handle, "latitudeOfFirstGridPointInDegrees" , &data.coordinates.latitude.first );
+    codes_get_double(handle, "latitudeOfLastGridPointInDegrees"  , &data.coordinates.latitude.last  );
+    codes_get_double(handle, "iDirectionIncrementInDegrees"      , &data.resolution.i   );
+    codes_get_double(handle, "jDirectionIncrementInDegrees"      , &data.resolution.j   );
+    codes_get_size  (handle, "values"                            , &data.gridSize       );
+    codes_get_long  (handle, "Ni"                                , &data.n.i            );
+    codes_get_long  (handle, "Nj"                                , &data.n.j            );
+}
 
-    std::string _date = date;
-    messageData.date =  fmt::format("{}-{}-{}", 
-                        _date.substr(0, 4),
-                        _date.substr(4, 2), 
-                        _date.substr(6, 2));
-    messageData.time = fmt::format("{}:{}", _date.substr(11, 2), _date.substr(13, 2));
+// Extract data from grib message
+void getMessageData(codes_handle* handle, GribData& data) {
+    size_t len;
+    len = 20; codes_get_string(handle, "shortName"       , data.shortName   , &len);
+    len = 20; codes_get_string(handle, "typeOfLevel"     , data.typeOfLevel , &len);
+    len = 20; codes_get_string(handle, "validityDate"    , data.validityDate, &len);
+    len = 20; codes_get_string(handle, "validityTime"    , data.validityTime, &len);
+    len = 20; codes_get_string(handle, "units"           , data.units       , &len);
+    codes_get_long(handle, "step" , &data.step );
+    codes_get_long(handle, "level", &data.level);
+}
+
+// Extract data with a certain coordinates
+void getGridData(codes_handle* handle, GribData& grib, InputData& input) {
+    size_t size = grib.gridSize;
+    double* values = new double[size];
+    codes_get_double_array(handle, "values", values, &size);
+
+    int indexLonMin =  round((input.coordinates.longitude.first - grib.coordinates.longitude.first) / grib.resolution.i);
+    int indexLonMax =  round((input.coordinates.longitude.last  - grib.coordinates.longitude.first) / grib.resolution.i);
+    int indexLatMin =  round((grib.coordinates.latitude.first   - input.coordinates.latitude.first) / grib.resolution.i);
+    int indexLatMax =  round((grib.coordinates.latitude.first   - input.coordinates.latitude.last ) / grib.resolution.i);
+
+    for(int y = indexLatMin; y <= indexLatMax; y++) {
+        for(int x = indexLonMin; x <= indexLonMax; x++) {
+            int i = y * grib.n.i + x; // Position in grid
+            grib.grid.push_back(values[i]);
+        }
+    }
+
+    delete[] values;
 }
 
 bool isInRange(double value, double min, double max) {
     return (value >= min && value <= max);
 }
 
-bool areInputCoordinatesInRange(InputData& inputData, FileData& fileData) {
-    return  isInRange(inputData.longitude.first, fileData.longitude.first, fileData.longitude.last) &&
-            isInRange(inputData.longitude.last , fileData.longitude.first, fileData.longitude.last) &&
-            isInRange(inputData.latitude.first , fileData.latitude.last  , fileData.latitude.first) &&
-            isInRange(inputData.latitude.last  , fileData.latitude.last  , fileData.latitude.first); 
+// latitude first is the greatest number in theses grib2 file
+// idk if this is a universel convention 
+bool areCoordinatesRangeWithinBounds(CoordinatesRange& coordsA, CoordinatesRange& coordsB) {
+    return  isInRange(coordsA.longitude.first, coordsB.longitude.first, coordsB.longitude.last) &&
+            isInRange(coordsA.longitude.last , coordsB.longitude.first, coordsB.longitude.last) &&
+            isInRange(coordsA.latitude.first , coordsB.latitude.last  , coordsB.latitude.first) &&
+            isInRange(coordsA.latitude.last  , coordsB.latitude.last  , coordsB.latitude.first); 
 }
 
-void printFileData(FileData& data) {
-    fmt::print("\n - - - - - - - File data - - - - - - - \n");
-    fmt::print("longitude      : {{{}, {}}}\n", data.longitude.first, data.longitude.last);
-    fmt::print("latitude       : {{{}, {}}}\n", data.latitude.first , data.latitude.last );
-    fmt::print("resolution     : {{{}, {}}}\n", data.resolution.i   , data.resolution.j  );
-    fmt::print("n              : {{{}, {}}}\n", data.n.i            , data.n.j           );
-    fmt::print("date           : {}\n", data.date    );
-    fmt::print("time           : {}\n", data.time    );
-    fmt::print("grid size      : {}\n", data.gridSize);
+void writeFile(std::string path, GribData& grib, InputData& input) {
+    fmt::ostream f = fmt::output_file(path);
+    f.print("{{\n");
+    f.print("\"units\":\"{}\",\n", grib.units);
+    f.print("\"forecast_date\":\"{}\",\n", convertDate(grib.validityDate));
+    f.print("\"forecast_time\":\"{}\",\n", convertTime(grib.validityTime));
+    f.print("\"longitude\":{{\"first\":{}, \"last\":{}}},\n", input.coordinates.longitude.first, input.coordinates.longitude.last);
+    f.print("\"latitude\" :{{\"first\":{}, \"last\":{}}},\n",  input.coordinates.latitude.first,  input.coordinates.latitude.last);
+    f.print("\"res\": {}, \n", grib.resolution.i);
+    f.print("\t\"index formula\": \"{} + {} * ni\",\n", 
+    "round((desired_longitude - longitude.first) / res)",
+    "round((latitude.first - desired_latitude)  / res)");
+    f.print("\"grid\":{::.2f}", grib.grid);
+    f.print("\n}}");
+    f.close();
 }
 
-void printMessageDate(MessageData& data) {
-    fmt::print("\n - - - - - - - Message data - - - - - - - \n");
-    fmt::print("shortName      : {}\n", data.shortName  );
-    fmt::print("type of level  : {}\n", data.typeOfLevel);
-    fmt::print("units          : {}\n", data.units      );
-    fmt::print("date           : {}\n", data.date       );
-    fmt::print("time           : {}\n", data.time       );
-    fmt::print("step           : {}\n", data.step       );
+std::string getLevelType(char* typeOfLevel, int level) {
+    if(strcmp(typeOfLevel,           "surface") == 0) { return "surface"; } 
+    if(strcmp(typeOfLevel,           "meanSea") == 0) { return "surface"; }
+    if(strcmp(typeOfLevel, "heightAboveGround") == 0) { return (level < 20 ? "surface" : "height"); }
+    if(strcmp(typeOfLevel,     "isobaricInhPa") == 0) { return "isobaric"; }
+    return "unknown" ;
 }
 
-void printInputData(InputData& data) {
-    fmt::print("\n - - - - - - - Input data - - - - - - - \n");
-    fmt::print("longitude      : {{{}, {}}}\n", data.longitude.first, data.longitude.last);
-    fmt::print("latitude       : {{{}, {}}}\n", data.latitude.first , data.latitude.last );
-    fmt::print("input  folder  : {}\n"        , data.gribFolder  );
-    fmt::print("output folder  : {}\n"        , data.outputFolder);
+// Return folder location containing the json file
+std::string getDestinationPath(GribData& grib, InputData& input) {
+    std::string type = getLevelType(grib.typeOfLevel, grib.level);
+    std::string path = fmt::format("json/{}/{}/{}/{}/{}", convertDate(grib.dataDate), input.outputFolder, grib.dataTime, type, grib.shortName);
+    if(type != "surface") { path += "/" + grib.level; }
+    return path;
 }
+
 
 void iterateMessages(std::string filename, InputData& inputData) {
     FILE* file = fopen(filename.c_str(), "r");
     codes_handle* handle; 
     int error;
     int count = 0;
-    FileData fileData;
+    GribData gribData;
 
     while((handle = codes_handle_new_from_file(0, file ,PRODUCT_GRIB, &error)) != NULL) {
         if(count == 0) { 
-            getFileData(handle, fileData);
-            // printFileData(fileData);
-            if(!areInputCoordinatesInRange(inputData, fileData)) {
-                std::cout << "Coordinate out of range" << std::endl;
+            getConstantData(handle, gribData);
+            if(!areCoordinatesRangeWithinBounds(inputData.coordinates, gribData.coordinates)) {
                 codes_handle_delete(handle);
-                break;
+                throw 5;
             }
         }
 
-        MessageData messageData;
-        getMessageData(handle, messageData);
+        gribData.grid.resize(0);
+        getMessageData(handle, gribData);
+        getGridData(handle, gribData, inputData);
 
-        if(type == "surface") {
-            path = fmt::format("json/{}/{}/{:02d}/{}/{}", date, folderName, hour, type, shortName);
-            createDirectory(path);
-        } else {
-            path = fmt::format("json/{}/{}/{:02d}/{}/{}/{}", date, folderName, hour, type, shortName, level);
-            createDirectory(path);
-        }
+        std::string path = getDestinationPath(gribData, inputData);
+        createDirectory(path);
         
-        printFileData(fileData);
-        printMessageDate(messageData);
+        std::string filename = fmt::format("{}/{:02d}.json", path, gribData.step);
+        writeFile(filename, gribData, inputData);
 
         codes_handle_delete(handle);
     }
@@ -167,29 +201,26 @@ void iterateMessages(std::string filename, InputData& inputData) {
     fclose(file);
 }
 
+
 int main(int argc, char* argv[]) {
 
-    // std::vector<float> a = {1,2,3,4,5};
-    // fmt::print("values : {}\n", a);
-    
-    struct FileData fileData;
     struct InputData inputData;
 
-    
     try {
         getInputData(inputData, argc, argv);
 
-        if( !std::filesystem::exists(inputData.gribFolder) || 
-            !std::filesystem::is_directory(inputData.gribFolder)) 
-        {
-            throw std::runtime_error(inputData.gribFolder + " is not a folder or do not exist.");
+        if(!std::filesystem::exists(inputData.gribFolder))       { throw 3; }
+        if(!std::filesystem::is_directory(inputData.gribFolder)) { throw 4; }
+
+        std::vector<std::string> filenames;
+        getFilesRecursive(inputData.gribFolder, filenames);
+
+        for(int i = 0; i < filenames.size(); i++) {
+            iterateMessages(filenames[i], inputData);
         }
 
-        // printInputData(inputData);
-
-        getFilesRecursive(inputData.gribFolder, filenames);
-        iterateMessages(filenames[12], inputData);
-
+    } catch(int code) {
+        std::cerr << errors[code] << std::endl;
     } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
         exit(1);

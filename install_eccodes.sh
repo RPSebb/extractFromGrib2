@@ -32,7 +32,7 @@ if [ ! -d "$filename" ]; then
     tar -xzf "$archive"
 fi
 
-# Delete build
+# Recreate empty build folder
 rm -rf "$buildFolder"
 mkdir "$buildFolder"
 
